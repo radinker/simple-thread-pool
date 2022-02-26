@@ -1,0 +1,19 @@
+//!/////////////////////////////////////////////////////////////////////////////
+//!  \file       SPConfig.hpp.in
+//!  \author     Jose Arboleda
+//!  \date       2022
+//!  \copyright  MIT License
+//!/////////////////////////////////////////////////////////////////////////////
+
+#ifndef SP_CONFIG_H
+#define SP_CONFIG_H
+
+#include <cstdint>
+
+static const uint32_t SP_VERSION_MAJOR = @SimpleThreadPool_VERSION_MAJOR@;
+static const uint32_t SP_VERSION_MINOR = @SimpleThreadPool_VERSION_MINOR@;
+static const uint32_t SP_VERSION_PATCH = @SimpleThreadPool_VERSION_PATCH@;
+
+#define SP_USE_THREAD_REPORT /*!< Enable thread report instrumentation */
+
+#endif //SP_CONFIG_H
