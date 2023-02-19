@@ -14,12 +14,8 @@
 
 CSPThreadPool::CSPThreadPool(): m_terminate{false}
 {
-
 #ifdef SP_SHOW_VERSION
-    std::cout << "STP version: " 
-              << SP_VERSION_MAJOR << "."
-              << SP_VERSION_MINOR << "."
-              << SP_VERSION_PATCH << "\n\n";
+    printVersion();
 #endif
 
     size_t workers = std::thread::hardware_concurrency();
@@ -77,4 +73,12 @@ bool CSPThreadPool::popJob(CSPJob& job)
     }
 
     return !emptyQueue;
+}
+
+void CSPThreadPool::printVersion()
+{
+    std::cout << "STP version: " 
+              << SP_VERSION_MAJOR << "."
+              << SP_VERSION_MINOR << "."
+              << SP_VERSION_PATCH << "\n\n";
 }

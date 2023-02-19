@@ -8,7 +8,7 @@
 cmake_minimum_required(VERSION 3.18)
 
 # Project name and version
-project(SimpleThreadPool VERSION 1.1.0)
+project(SimpleThreadPool VERSION 1.1.1)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)

@@ -70,6 +70,11 @@ private:
     //! \return true on success
     //!
     bool popJob(CSPJob& job);
+
+    //!
+    //! \brief  Prints the current STP version
+    //!
+    void printVersion();
 };
 
 #endif //SP_THREAD_POOL_H
