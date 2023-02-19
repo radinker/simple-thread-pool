@@ -1,7 +1,7 @@
 //!/////////////////////////////////////////////////////////////////////////////
 //!  \file       SPConfig.hpp.in
 //!  \author     Jose Arboleda
-//!  \date       2022
+//!  \date       2023
 //!  \copyright  MIT License
 //!/////////////////////////////////////////////////////////////////////////////
 
@@ -10,10 +10,14 @@
 
 #include <cstdint>
 
-static const uint32_t SP_VERSION_MAJOR = @SimpleThreadPool_VERSION_MAJOR@;
-static const uint32_t SP_VERSION_MINOR = @SimpleThreadPool_VERSION_MINOR@;
-static const uint32_t SP_VERSION_PATCH = @SimpleThreadPool_VERSION_PATCH@;
+//Internal definitions and config macros
+#define SP_CONST  inline constexpr  /*!< For global constant definitions */
+#define SP_USE_THREAD_REPORT        /*!< Enable thread report instrumentation */
+#define SP_SHOW_VERSION             /*!< Print version for debugging */
 
-#define SP_USE_THREAD_REPORT /*!< Enable thread report instrumentation */
+//Global constants
+SP_CONST uint32_t SP_VERSION_MAJOR = @SimpleThreadPool_VERSION_MAJOR@;
+SP_CONST uint32_t SP_VERSION_MINOR = @SimpleThreadPool_VERSION_MINOR@;
+SP_CONST uint32_t SP_VERSION_PATCH = @SimpleThreadPool_VERSION_PATCH@;
 
 #endif //SP_CONFIG_H

@@ -1,7 +1,7 @@
 //!/////////////////////////////////////////////////////////////////////////////
 //!  \file       SPThreadPool.cpp
 //!  \author     Jose Arboleda
-//!  \date       2022
+//!  \date       2023
 //!  \copyright  MIT License
 //!/////////////////////////////////////////////////////////////////////////////
 
@@ -14,6 +14,14 @@
 
 CSPThreadPool::CSPThreadPool(): m_terminate{false}
 {
+
+#ifdef SP_SHOW_VERSION
+    std::cout << "STP version: " 
+              << SP_VERSION_MAJOR << "."
+              << SP_VERSION_MINOR << "."
+              << SP_VERSION_PATCH << "\n\n";
+#endif
+
     size_t workers = std::thread::hardware_concurrency();
 
     if (!workers)
