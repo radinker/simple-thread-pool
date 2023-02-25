@@ -1,13 +1,15 @@
 //!/////////////////////////////////////////////////////////////////////////////
 //!  \file       SPThreadPool.hpp
 //!  \author     Jose Arboleda
-//!  \date       2022
+//!  \date       2023
 //!  \copyright  MIT License
 //!/////////////////////////////////////////////////////////////////////////////
 
 #ifndef SP_THREAD_POOL_H
 #define SP_THREAD_POOL_H
 
+#include <atomic>
+#include <condition_variable>
 #include <future>
 #include <queue>
 #include <thread>
@@ -22,9 +24,12 @@
 //!
 class CSPThreadPool {
 
-    std::mutex                m_mutex;      /*!< Guards access to the jobs queue */
+    std::mutex                m_qMutex;     /*!< Guards access to the jobs queue */
+    std::mutex                m_rMutex;     /*!< Ready cond var mutex */
     std::atomic_bool          m_terminate;  /*!< Signals threads to terminate */
     std::queue<CSPJob>        m_jobs;       /*!< Jobs to be performed by the pool */
+    std::condition_variable   m_ready;      /*!< Signals when a job is waiting in the queue */
+    std::atomic_int           m_workers;    /*!< Total active workers */
     std::vector<std::thread>  m_threads;    /*!< Available workers */
 
 #ifdef SP_THREAD_REPORT_H
@@ -46,14 +51,18 @@ public:
     std::future<typename std::invoke_result<Fn>::type>
     pushJob(Fn f)
     {
-        std::unique_lock<std::mutex> lock(m_mutex);
         typedef typename std::invoke_result<Fn>::type ResultType;
 
         //packaged_task is used to wrap f with an asynchronous result
         std::packaged_task<ResultType()> job(std::move(f));
         std::future<ResultType> result(job.get_future());
 
-        m_jobs.push(std::move(job));
+        {
+            std::unique_lock<std::mutex> lock(m_qMutex);
+            m_jobs.push(std::move(job));
+        }
+
+        m_ready.notify_one();
 
         return result;
     }

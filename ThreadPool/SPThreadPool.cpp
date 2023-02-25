@@ -7,6 +7,7 @@
 
 #include "SPThreadPool.hpp"
 
+#include <chrono>
 #include <iostream>
 #include <SPConfig.hpp>
 #include <SPThreadReport.hpp>
@@ -22,6 +23,8 @@ CSPThreadPool::CSPThreadPool(): m_terminate{false}
 
     if (!workers)
         workers = 1;
+    
+    m_workers = workers;
 
     //Spawn all available workers
     while (workers--)
@@ -31,8 +34,14 @@ CSPThreadPool::CSPThreadPool(): m_terminate{false}
 
 CSPThreadPool::~CSPThreadPool()
 {
-    m_terminate = true; //Command all workers to terminate
+    //Command all workers to terminate
+    m_terminate = true; 
 
+    while (m_workers) {
+        m_ready.notify_all();
+        std::this_thread::sleep_for(SP_TERMINATE_NOTIFY_INTERVAL);
+    }
+     
     //Wait for the workers to complete
     for (auto& thread: m_threads) {
         if (thread.joinable())
@@ -44,23 +53,28 @@ CSPThreadPool::~CSPThreadPool()
 #endif
 }
 
-//TODO: replace spin lock with conditional variable
+
 void CSPThreadPool::doWork()
 {
     while (!m_terminate) {
         CSPJob job;
 
-        if (popJob(job))
+        if (popJob(job)) {
             job.work();
-        else
-            std::this_thread::yield();
+        }    
+        else {
+            std::unique_lock<std::mutex> lock(m_rMutex);
+            m_ready.wait(lock);
+        }
     }
+
+    m_workers--;
 }
 
 
 bool CSPThreadPool::popJob(CSPJob& job)
 {
-    std::unique_lock<std::mutex> lock(m_mutex);
+    std::unique_lock<std::mutex> lock(m_qMutex);
     bool emptyQueue = m_jobs.empty();
 
     if (!emptyQueue) {
@@ -74,6 +88,7 @@ bool CSPThreadPool::popJob(CSPJob& job)
 
     return !emptyQueue;
 }
+
 
 void CSPThreadPool::printVersion()
 {

@@ -22,5 +22,5 @@ modern C++.
 
 ### License
 
-* Copyright (c) 2022 Jose Arboleda
+* Copyright (c) 2023 Jose Arboleda
 * MIT License
