@@ -8,8 +8,8 @@
 #include "SPThreadPool.hpp"
 
 #include <chrono>
+#include <cstddef>
 #include <iostream>
-#include <SPConfig.hpp>
 #include <SPThreadReport.hpp>
 
 
@@ -24,8 +24,6 @@ CSPThreadPool::CSPThreadPool(): m_terminate{false}
     if (!workers)
         workers = 1;
     
-    m_workers = workers;
-
     //Spawn all available workers
     while (workers--)
         m_threads.push_back(std::thread(&CSPThreadPool::doWork, this));
@@ -36,11 +34,9 @@ CSPThreadPool::~CSPThreadPool()
 {
     //Command all workers to terminate
     m_terminate = true; 
+    size_t workers = m_threads.size();
 
-    while (m_workers) {
-        m_ready.notify_all();
-        std::this_thread::sleep_for(SP_TERMINATE_NOTIFY_INTERVAL);
-    }
+    m_ready.release(static_cast<std::ptrdiff_t>(workers));
      
     //Wait for the workers to complete
     for (auto& thread: m_threads) {
@@ -59,16 +55,11 @@ void CSPThreadPool::doWork()
     while (!m_terminate) {
         CSPJob job;
 
-        if (popJob(job)) {
-            job.work();
-        }    
-        else {
-            std::unique_lock<std::mutex> lock(m_rMutex);
-            m_ready.wait(lock);
-        }
-    }
+        m_ready.acquire();
 
-    m_workers--;
+        if (popJob(job))
+            job.work();
+    }
 }
 
 

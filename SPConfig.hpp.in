@@ -9,7 +9,7 @@
 #define SP_CONFIG_H
 
 #include <cstdint>
-#include <chrono>
+#include <limits>
 
 //Internal definitions and config macros
 #define SP_CONST  inline constexpr        /*!< For global constant definitions */
@@ -21,6 +21,6 @@ SP_CONST uint32_t SP_VERSION_MAJOR = @SimpleThreadPool_VERSION_MAJOR@;
 SP_CONST uint32_t SP_VERSION_MINOR = @SimpleThreadPool_VERSION_MINOR@;
 SP_CONST uint32_t SP_VERSION_PATCH = @SimpleThreadPool_VERSION_PATCH@;
 
-SP_CONST std::chrono::milliseconds SP_TERMINATE_NOTIFY_INTERVAL{50};
+SP_CONST int SP_SEM_MAX_VALUE = std::numeric_limits<int>::max();
 
 #endif //SP_CONFIG_H

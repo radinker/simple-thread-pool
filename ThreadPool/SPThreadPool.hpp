@@ -12,9 +12,11 @@
 #include <condition_variable>
 #include <future>
 #include <queue>
+#include <semaphore>
 #include <thread>
 #include <type_traits>
 #include <vector>
+#include <SPConfig.hpp>
 #include <SPJob.hpp>
 #include <SPThreadReport.hpp>
 
@@ -23,13 +25,12 @@
 //! \brief A simple thread pool
 //!
 class CSPThreadPool {
+    using counting_semaphore = std::counting_semaphore<SP_SEM_MAX_VALUE>;
 
     std::mutex                m_qMutex;     /*!< Guards access to the jobs queue */
-    std::mutex                m_rMutex;     /*!< Ready cond var mutex */
-    std::atomic_bool          m_terminate;  /*!< Signals threads to terminate */
+    counting_semaphore        m_ready{0};   /*!< Signals the workers when a new job is ready */
+    std::atomic_bool          m_terminate;  /*!< Signals the workers to terminate */
     std::queue<CSPJob>        m_jobs;       /*!< Jobs to be performed by the pool */
-    std::condition_variable   m_ready;      /*!< Signals when a job is waiting in the queue */
-    std::atomic_int           m_workers;    /*!< Total active workers */
     std::vector<std::thread>  m_threads;    /*!< Available workers */
 
 #ifdef SP_THREAD_REPORT_H
@@ -62,7 +63,7 @@ public:
             m_jobs.push(std::move(job));
         }
 
-        m_ready.notify_one();
+        m_ready.release();
 
         return result;
     }
