@@ -7,10 +7,8 @@
 
 #include "SPThreadPool.hpp"
 
-#include <chrono>
 #include <cstddef>
 #include <iostream>
-#include <SPThreadReport.hpp>
 
 
 CSPThreadPool::CSPThreadPool(): m_terminate{false}

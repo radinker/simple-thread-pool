@@ -9,7 +9,6 @@
 #define SP_THREAD_POOL_H
 
 #include <atomic>
-#include <condition_variable>
 #include <future>
 #include <queue>
 #include <semaphore>
