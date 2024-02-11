@@ -7,7 +7,6 @@
 
 #include "SPThreadPool.hpp"
 
-#include <cstddef>
 #include <iostream>
 
 
@@ -24,7 +23,7 @@ CSPThreadPool::CSPThreadPool(): m_terminate{false}
     
     //Spawn all available workers
     while (workers--)
-        m_threads.push_back(std::thread(&CSPThreadPool::doWork, this));
+        m_threads.emplace_back(&CSPThreadPool::doWork, this);
 }
 
 

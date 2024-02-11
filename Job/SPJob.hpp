@@ -23,7 +23,7 @@ class CSPJob {
 public:
     CSPJob() = default;
 
-    explicit CSPJob(CSPJob&& job) noexcept: m_callPtr{std::move(job.m_callPtr)} {}
+    CSPJob(CSPJob&& job) noexcept: m_callPtr{std::move(job.m_callPtr)} {}
 
     //!
     //! \brief  Generic constructor to build a job from a callable entity
@@ -34,9 +34,9 @@ public:
     template<typename F>
     CSPJob(F&& f): m_callPtr{std::make_unique<CSPFunctionCall<F>>(std::forward<F>(f))} {}
 
-    ~CSPJob(){}
+    ~CSPJob() = default;
 
-    CSPJob& operator=(CSPJob&& job);
+    CSPJob& operator=(CSPJob&& job) noexcept;
 
     //!
     //! \brief checks the internal pointer m_callPtr and performs the call

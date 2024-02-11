@@ -18,7 +18,7 @@ void CSPJob::work()
 }
 
 
-CSPJob& CSPJob::operator=(CSPJob&& job)
+CSPJob& CSPJob::operator=(CSPJob&& job) noexcept
 {
     m_callPtr = std::move(job.m_callPtr);
     return *this;

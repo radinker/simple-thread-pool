@@ -17,7 +17,7 @@
 class ISPFunctionCall {
 public:
     virtual void call() = 0;
-    virtual ~ISPFunctionCall() {}
+    virtual ~ISPFunctionCall() = default;
 };
 
 //!
@@ -36,7 +36,7 @@ public:
     //!
     //! \brief Wrapper to perform the actual call
     //!
-    virtual void call() override
+    void call() override
     {
         fn();
     }

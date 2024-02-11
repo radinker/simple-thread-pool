@@ -83,7 +83,7 @@ private:
     //!
     //! \brief  Prints the current STP version
     //!
-    void printVersion();
+    static void printVersion();
 };
 
 #endif //SP_THREAD_POOL_H
